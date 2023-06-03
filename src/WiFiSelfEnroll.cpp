@@ -18,17 +18,32 @@
 /// @brief the default wifi password
  #define SOICT_WIFI_PASSWORD "12345678"
 
+/// @brief loop times try to reconnect to the AP before activating the station mode
+ #define MAX_TRY_WIFI_ACCESS 10
+
+/// @brief Auto restart the device after 5 minute. 
+/// This is very useful to make sure that the device isn't trapped in WiFi Adhoc Station mode forever. 
+/// Such as in cases the AP restarts, or the electricty gone out.
+ #define ADHOC_STATION_DURATION 5 * 60
+
+/// @brief Press BOOT Button whenever restart to force device into Adhoc Station mode
+#define BOOT_BUTTON GPIO_NUM_9
+
 /// @brief  the current ssid. A pointer to parambuf
 String ssid;
+char myssid[32];
 /// @brief  the current password. A pointer to parambuf
 String password;
+char mypassword[20];
 /// @brief  the current deviceid. A pointer to parambuf
 String deviceid;
+char mydeviceid[30];
 /// @brief  adhoc webserver to configure the new wifi network
 WebServer server(80);
 /// @brief flash mem handler 
 Preferences preferences;
 
+WiFiClient wificlient;
 /*-------------------------------------------------------------------------*/
 /// @brief send the homepage html to client
 /// @details entrypoint http://192.168.15.1/
@@ -141,10 +156,10 @@ void WiFiSelfEnroll::_APISettings()  {
 /*-------------------------------------------------------------------------*/
 /// @brief Read the ssid / deviceid into flash memory
 /// @return e.g. '812A,12345678'
-void WiFiSelfEnroll::_ReadWiFiConfig()  {
+void WiFiSelfEnroll::ReadWiFiConfig()  {
     byte len;
 #ifdef _DEBUG_       
-    Serial.printf("_ReadWiFiConfig");
+    Serial.printf("ReadWiFiConfig");
 #endif    
     /// Control the flash memory with its idendification namespace, and read mode
     preferences.begin(FLASH_NAMESPACE, true); 
@@ -160,17 +175,17 @@ void WiFiSelfEnroll::_ReadWiFiConfig()  {
     
 ///--------------------------------------------------------------------
 /// @brief Restart the device
-void WiFiSelfEnroll::_Restart()  {
+void WiFiSelfEnroll::_Reboot()  {
     #ifdef _DEBUG_             
     Serial.println("restart...");
     #endif              
     ESP.restart();
 }
 
-void WiFiSelfEnroll::setup(const char * adhoc_ssid, const char * adhoc_password) {
+void WiFiSelfEnroll::SetupStation(const char * adhoc_ssid, const char * adhoc_password) {
     
     // Read the current wifi config
-    _ReadWiFiConfig();
+    ReadWiFiConfig();
 
     IPAddress local_ip(192,168,9,1);
     IPAddress gateway(192,168,9,1);
@@ -190,7 +205,6 @@ void WiFiSelfEnroll::setup(const char * adhoc_ssid, const char * adhoc_password)
     digitalWrite(LED_BUILTIN, HIGH);       
 
 #ifdef _DEBUG_
-    Serial.begin(115200);
     Serial.print("Adhoc WiFi: ");
     Serial.print(adhoc_ssid);
     Serial.print(" / ");
@@ -224,26 +238,123 @@ void WiFiSelfEnroll::setup(const char * adhoc_ssid, const char * adhoc_password)
     server.on("/cgi/scan", _APIScan);
     server.on("/cgi/save", _APISave);
     server.on("/cgi/settings", _APISettings);
-    server.on("/restart", _Restart);
+    server.on("/restart", _Reboot);
     /// Show the own website
     server.begin();
+    _loop();
+    _Reboot();
 }
 
-void WiFiSelfEnroll::setup(){
+/// @brief loop with led indicator in a shorttime. just to debug
+void WiFiSelfEnroll::_loop()  {          
+    unsigned int time_in_station_mode = ADHOC_STATION_DURATION;
+    while (time_in_station_mode > 0) {
+    #ifdef _DEBUG_     
+        if (APMode) {
+            Serial.printf("Stations connected to soft-AP = %d \n", WiFi.softAPgetStationNum());
+        }
+    #endif        
+        //polling and call event functions
+        server.handleClient();
+        //Indicator
+        digitalWrite(LED_BUILTIN, HIGH);       
+        delay(100);
+        digitalWrite(LED_BUILTIN, LOW);        
+        delay(100);
+        digitalWrite(LED_BUILTIN, HIGH);       
+        delay(100);
+        digitalWrite(LED_BUILTIN, LOW);                 
+        delay(1000);
+        time_in_station_mode--;
+    }
+}
+
+char * WiFiSelfEnroll::GetSSID()  { 
+    ssid.toCharArray(myssid, 30);
+    return myssid;
+}
+
+char * WiFiSelfEnroll::GetPassword()  { 
+    password.toCharArray(mypassword, 20);
+    return mypassword;
+}
+
+char * WiFiSelfEnroll::GetDeviceID()  { 
+    deviceid.toCharArray(mydeviceid, 30);
+    return mydeviceid;
+}
+
+bool WiFiSelfEnroll::IsConfigOK(){
+    // WiFi Access Status
+    wl_status_t wf_status;
+
+    // loop times try to reconnect to the AP before activating the station mode
+    byte try_access_times = MAX_TRY_WIFI_ACCESS;
+
+    /// Read the ssid and password stored in the flash memory
+    ReadWiFiConfig();
+
+    /// set as a Wi-Fi station and try to connect to the AP
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(GetSSID(), GetPassword());
+#ifdef _DEBUG_     
+    Serial.printf("Connecting to %s / %s\n", GetSSID(), GetPassword());
+#endif    
+    while (try_access_times > 0)
+    {
+        wf_status = WiFi.status();
+#ifdef _DEBUG_        
+        switch(wf_status) {
+          case WL_NO_SSID_AVAIL:
+            Serial.println("[WiFi] SSID not found");
+            break;
+          case WL_CONNECT_FAILED:
+            Serial.print("[WiFi] Failed - WiFi not connected! Reason: ");
+            break;
+          case WL_CONNECTION_LOST:
+            Serial.println("[WiFi] Connection was lost");
+            break;
+          case WL_SCAN_COMPLETED:
+            Serial.println("[WiFi] Scan is completed");
+            break;
+          case WL_DISCONNECTED:
+            Serial.println("[WiFi] WiFi is disconnected");
+            break;
+#endif
+          case WL_CONNECTED:
+            #ifdef _DEBUG_       
+                Serial.println();
+                Serial.print("Connected, IP address: ");
+                Serial.println(WiFi.localIP());    
+            #endif          
+            return true;
+                
+          default:
+            Serial.print("[WiFi] WiFi Status: ");
+            Serial.println(WiFi.status());
+            break;
+        }
+        try_access_times = try_access_times -1;
+        delay(1000);
+    }
+
+    return false;
+}
+
+void WiFiSelfEnroll::setup() {
     WiFiSelfEnroll::setup(SOICT_WIFI_SSID, SOICT_WIFI_PASSWORD);
 }
-
-void WiFiSelfEnroll::loop()  {          
-#ifdef _DEBUG_        
-    Serial.printf("Stations connected to soft-AP = %d \n", WiFi.softAPgetStationNum());
-#endif        
-    //polling and call event functions
-    server.handleClient();
-    //Indicator
-    digitalWrite(LED_BUILTIN, HIGH);       
-    delay(50);
-    digitalWrite(LED_BUILTIN, LOW);        
+void WiFiSelfEnroll::setup(const char * adhoc_ssid, const char * adhoc_password) {
+    APMode = false;
+    /// Boot button connects GPIO9 to GND, so we must pullup it inside. 
+    pinMode(BOOT_BUTTON, INPUT_PULLUP);
+#ifdef _DEBUG_    
+    Serial.println("Check boot button..");
+#endif    
     delay(1000);
-
+    /// Turn to Adhoc station mode if the Boot button pressed or cannot connect to the AP
+    if (digitalRead(BOOT_BUTTON) == LOW || !IsConfigOK()){
+        APMode = true;
+        SetupStation(adhoc_ssid, adhoc_password);
+    } 
 }
-
