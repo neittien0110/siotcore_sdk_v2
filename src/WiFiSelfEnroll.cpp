@@ -19,7 +19,7 @@
  #define SOICT_WIFI_PASSWORD "12345678"
 
 /// @brief loop times try to reconnect to the AP before activating the station mode
- #define MAX_TRY_WIFI_ACCESS 10
+ #define MAX_TRY_WIFI_ACCESS 15
 
 /// @brief Auto restart the device after 5 minute. 
 /// This is very useful to make sure that the device isn't trapped in WiFi Adhoc Station mode forever. 
@@ -103,7 +103,8 @@ void WiFiSelfEnroll::_APISave()  {
     String myArg="s";
     /// Save SSID
     if (server.hasArg(myArg)) {
-        preferences.putString(FLASH_NAMESPACE_KEY_SSID, server.arg(myArg));
+        ssid = server.arg(myArg);
+        preferences.putString(FLASH_NAMESPACE_KEY_SSID, ssid);
         #ifdef _DEBUG_             
         Serial.println(server.arg(myArg));
         #endif        
@@ -112,7 +113,8 @@ void WiFiSelfEnroll::_APISave()  {
     /// Save Password
     myArg="p";
     if (server.hasArg(myArg)) {
-        preferences.putString(FLASH_NAMESPACE_KEY_PASSWORD, server.arg(myArg));
+        password = server.arg(myArg);
+        preferences.putString(FLASH_NAMESPACE_KEY_PASSWORD, password);
         #ifdef _DEBUG_             
         Serial.println(server.arg(myArg));
         #endif        
@@ -121,13 +123,14 @@ void WiFiSelfEnroll::_APISave()  {
     /// Save DeviceID
     myArg="d";
     if (server.hasArg(myArg)) {
-        preferences.putString(FLASH_NAMESPACE_KEY_DEVICEID, server.arg(myArg));
+        deviceid = server.arg(myArg);
+        preferences.putString(FLASH_NAMESPACE_KEY_DEVICEID, deviceid);
         #ifdef _DEBUG_             
         Serial.println(server.arg(myArg));
         #endif        
     }    
 
-    /// Save DeviceID
+    /// clear all
     if (server.hasArg("clear")) {
         preferences.clear();
         #ifdef _DEBUG_             
@@ -145,11 +148,12 @@ void WiFiSelfEnroll::_APISave()  {
 /// @brief WebAPI: reponse the wifi configuration and device id
 /// @details exntrypoint http://192.168.15.1/cgi/save?n=ssid&p=password
 void WiFiSelfEnroll::_APISettings()  {
-#ifdef _DEBUG_       
-    Serial.println("WiFiSelf: /cgi/settings");
-#endif
     char buf[50];
     (ssid + "," + password + ',' + deviceid).toCharArray(buf,50);
+#ifdef _DEBUG_       
+    Serial.print("WiFiSelf: /cgi/settings - ");
+    Serial.println(buf);
+#endif
     /// Response to the web client
     server.send(200,"text/plain", buf);
 }
