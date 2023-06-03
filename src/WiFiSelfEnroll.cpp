@@ -157,6 +157,7 @@ void WiFiSelfEnroll::_APISettings()  {
     /// Response to the web client
     server.send(200,"text/plain", buf);
 }
+
 /*-------------------------------------------------------------------------*/
 /// @brief Read the ssid / deviceid into flash memory
 /// @return e.g. '812A,12345678'
@@ -177,8 +178,8 @@ void WiFiSelfEnroll::ReadWiFiConfig()  {
     return;
 }        
     
-///--------------------------------------------------------------------
-/// @brief Restart the device
+/*-------------------------------------------------------------------------*/
+/// @brief Reboot the device
 void WiFiSelfEnroll::_Reboot()  {
     #ifdef _DEBUG_             
     Serial.println("restart...");
@@ -186,6 +187,10 @@ void WiFiSelfEnroll::_Reboot()  {
     ESP.restart();
 }
 
+/*-------------------------------------------------------------------------*/
+/// @brief setup the Adhoc wifi
+/// @param ssid     Wifi name. E.g "My WiFi"
+/// @param password  Wifi secret password.
 void WiFiSelfEnroll::SetupStation(const char * adhoc_ssid, const char * adhoc_password) {
     
     // Read the current wifi config
@@ -345,9 +350,16 @@ bool WiFiSelfEnroll::IsConfigOK(){
     return false;
 }
 
+/// @brief make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station with ssid = SOICT_CORE_BOARD and password =  12345678
 void WiFiSelfEnroll::setup() {
     WiFiSelfEnroll::setup(SOICT_WIFI_SSID, SOICT_WIFI_PASSWORD);
 }
+
+/// @brief make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station to enter the new config
+/// @param ssid     Wifi name. E.g "My WiFi"
+/// @param password  Wifi secret password.
+/// @note should let it at the first part of the global setup() function in Arduino Code.
+/// @example  WiFiSelfEnroll MyWiFi;  MyWiFi.setup("ABC","12345678");  
 void WiFiSelfEnroll::setup(const char * adhoc_ssid, const char * adhoc_password) {
     APMode = false;
     /// Boot button connects GPIO9 to GND, so we must pullup it inside. 

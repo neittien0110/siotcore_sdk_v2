@@ -1,6 +1,7 @@
 //----------------------------------------------------------------------
 //  IDE: Visual Studio Code + PlatformIO extension
-//  Author: Nguyen Duc Tien
+//  Author: Nguyen Duc Tien, tien.nguyenduc@hust.edu.vn
+//  Website: https://soict.hust.edu.vn/ths-nguyen-duc-tien.html
 //----------------------------------------------------------------------
 #include <Arduino.h>
 #include "WiFiSelfEnroll.h"
@@ -8,10 +9,13 @@
 WiFiSelfEnroll MyWiFi;
 
 void setup() {
-  // put your setup code here, to run once:
+  // Make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station with ssid = SOICT_CORE_BOARD and password =  12345678
   MyWiFi.setup();
+  // TODO something
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  Serial.println(MyWiFi.GetDeviceID());
+  Serial.printf("  %s / %s \n", MyWiFi.GetSSID(), MyWiFi.GetPassword());
+  delay(1000);
 }
