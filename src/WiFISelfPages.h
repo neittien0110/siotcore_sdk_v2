@@ -50,7 +50,7 @@ html {
         .then(text => {
             let fields = text.split(',');
             document.getElementById("ssid").innerHTML = fields[0];
-            document.getElementById("did").innerHTML = fields[1];
+            document.getElementById("did").innerHTML = fields[2];
         })
     }
     function SetDeviceID() {

@@ -223,7 +223,7 @@ void WiFiSelfEnroll::SetupStation(const char * adhoc_ssid, const char * adhoc_pa
     if (WiFi.softAP(adhoc_ssid, adhoc_password,7,false)) {
 #ifdef _DEBUG_
         Serial.println("WiFi is ready!");
-#endif                
+#endif                 
     }
 
 #ifdef _DEBUG_        
@@ -337,7 +337,7 @@ bool WiFiSelfEnroll::IsConfigOK(){
         try_access_times = try_access_times -1;
         delay(1000);
     }
-
+    WiFi.disconnect();
     return false;
 }
 
