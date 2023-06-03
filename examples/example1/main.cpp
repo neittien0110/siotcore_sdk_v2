@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
-// 
 //  IDE: Visual Studio Code + PlatformIO extension
+//  Author: Nguyen Duc Tien
 //----------------------------------------------------------------------
 #include <Arduino.h>
 #include "WiFiSelfEnroll.h"
@@ -13,6 +13,5 @@ void setup() {
 }
 
 void loop() {
-  MyWiFi.loop();
   // put your main code here, to run repeatedly:
 }
