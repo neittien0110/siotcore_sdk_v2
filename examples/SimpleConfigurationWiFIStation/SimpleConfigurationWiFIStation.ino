@@ -9,6 +9,8 @@
 WiFiSelfEnroll MyWiFi;
 
 void setup() {
+  //just for debug
+  Serial.begin(115200);
   // Make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station with ssid = SOICT_CORE_BOARD and password =  12345678
   MyWiFi.setup();
   // TODO something
