@@ -4,8 +4,9 @@
 //  Website: https://soict.hust.edu.vn/ths-nguyen-duc-tien.html
 //----------------------------------------------------------------------
 #include <Arduino.h>
-#include "WiFiSelfEnroll.h"
+#include <WiFiSelfEnroll.h>  // SIOT Core Lib - seft setup wifi network
 
+// Handler adhoc wifi station
 WiFiSelfEnroll MyWiFi;
 
 void setup() {

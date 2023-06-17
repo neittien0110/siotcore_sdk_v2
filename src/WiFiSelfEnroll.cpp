@@ -168,9 +168,21 @@ void WiFiSelfEnroll::ReadWiFiConfig()  {
 #endif    
     /// Control the flash memory with its idendification namespace, and read mode
     preferences.begin(FLASH_NAMESPACE, true); 
-    ssid = preferences.getString(FLASH_NAMESPACE_KEY_SSID);
-    password = preferences.getString(FLASH_NAMESPACE_KEY_PASSWORD);
-    deviceid = preferences.getString(FLASH_NAMESPACE_KEY_DEVICEID);
+    if (preferences.isKey(FLASH_NAMESPACE_KEY_SSID)) {
+        ssid = preferences.getString(FLASH_NAMESPACE_KEY_SSID);
+    } else  {
+        ssid = "";
+    }
+    if (preferences.isKey(FLASH_NAMESPACE_KEY_PASSWORD)) {
+        password = preferences.getString(FLASH_NAMESPACE_KEY_PASSWORD);
+    } else {
+        password = "";
+    }
+    if (preferences.isKey(FLASH_NAMESPACE_KEY_DEVICEID)) {
+        deviceid = preferences.getString(FLASH_NAMESPACE_KEY_DEVICEID);
+    } else {
+        deviceid = "";
+    }
     preferences.end();
 #ifdef _DEBUG_       
     Serial.printf("In Flash: %s / %s , %s\n", ssid, password, deviceid);
