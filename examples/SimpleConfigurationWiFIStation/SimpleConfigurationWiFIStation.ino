@@ -3,7 +3,7 @@
 //  Organization: School of Information and Communication Technogloy,
 //                Ha Noi Univerversity of Science and Technology
 //  Website: https://soict.hust.edu.vn
-//  Example 1: Connect WiFi network
+//  Example: Connect WiFi network
 //  Purpose: using siot core lib to configure WiFi network for your IoT 
 //           device by smartphone. No need re programming.
 //----------------------------------------------------------------------

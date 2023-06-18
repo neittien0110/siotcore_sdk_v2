@@ -1,8 +1,8 @@
-#include "WiFiSelfEnroll.h"         /// raw html of pages
 #include <WiFi.h>
 #include <WebServer.h>              /// create webserver
+#include <Preferences.h>            /// use permanent flash storage  https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
+#include "WiFiSelfEnroll.h"         
 #include "WiFISelfPages.h"          /// raw html of pages
-#include "Preferences.h"            /// use permanent flash storage  https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
 
 /// @brief print more debug information to serial
 #define _DEBUG_
