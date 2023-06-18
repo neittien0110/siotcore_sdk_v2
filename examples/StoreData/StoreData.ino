@@ -5,11 +5,11 @@
 //  Website: https://soict.hust.edu.vn
 //  Example: Send data to the SIOT Center
 //  Purpose: using siot core lib to send data from your IoT to the
-//           correctsponding virtual device on http://siot.soict.ai
+//           correctsponding virtual device on SIOT Center
 //  Using SIOT Center and virtual device:
-//  1. Open sinno@soict.hust.edu.vn
+//  1. Open the SIOT Center http://siot.soict.ai
 //  2. Login with account sinno@soict.hust.edu.vn and password is 123456
-//  3. On the left menu, click Arduino Siot Client to see realtime data
+//  3. On the left navigation menu, click Arduino Siot Client to see realtime data
 //  Shortlink: http://siot.soict.ai/devices/siot-demo
 //
 //----------------------------------------------------------------------
