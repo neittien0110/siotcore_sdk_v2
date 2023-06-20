@@ -15,18 +15,21 @@
 #endif
 
 // Handler adhoc wifi station
-WiFiSelfEnroll MyWiFi;
+WiFiSelfEnroll * MyWiFi = new WiFiSelfEnroll();
 
 void setup() {
   //just for debug
   Serial.begin(115200);
   // Make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station with ssid = SOICT_CORE_BOARD and password =  12345678
-  MyWiFi.setup();
+  MyWiFi->setup();
+  // Release the memory allocated for WiFi Station Handler after finishing his work
+  delete  MyWiFi;
+  MyWiFi = _NULL;
   // TODO something
 }
 
 void loop() {
-  Serial.println(MyWiFi.GetDeviceID());
-  Serial.printf("  %s / %s \n", MyWiFi.GetSSID(), MyWiFi.GetPassword());
+  Serial.println(MyWiFi->GetDeviceID());
+  Serial.printf("  %s / %s \n", MyWiFi->GetSSID(), MyWiFi->GetPassword());
   delay(1000);
 }

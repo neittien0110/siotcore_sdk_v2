@@ -1,6 +1,3 @@
-#include <WiFi.h>
-#include <WebServer.h>              /// create webserver
-#include <Preferences.h>            /// use permanent flash storage  https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
 #include "WiFiSelfEnroll.h"         
 #include "WiFISelfPages.h"          /// raw html of pages
 
@@ -30,20 +27,20 @@
 #define BOOT_BUTTON GPIO_NUM_9
 
 /// @brief  the current ssid. A pointer to parambuf
-String ssid;
-char myssid[32];
+String WiFiSelfEnroll::ssid;
+char WiFiSelfEnroll::myssid[32];
 /// @brief  the current password. A pointer to parambuf
-String password;
-char mypassword[20];
+String WiFiSelfEnroll::password;
+char WiFiSelfEnroll::mypassword[20];
 /// @brief  the current deviceid. A pointer to parambuf
-String deviceid;
-char mydeviceid[30];
+String WiFiSelfEnroll::deviceid;
+char WiFiSelfEnroll::mydeviceid[30];
 /// @brief  adhoc webserver to configure the new wifi network
-WebServer server(80);
+WebServer WiFiSelfEnroll::server(80);
 /// @brief flash mem handler 
-Preferences preferences;
+Preferences WiFiSelfEnroll::preferences;
 
-WiFiClient wificlient;
+WiFiClient WiFiSelfEnroll::wificlient;
 /*-------------------------------------------------------------------------*/
 /// @brief send the homepage html to client
 /// @details entrypoint http://192.168.15.1/

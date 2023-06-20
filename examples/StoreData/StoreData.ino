@@ -23,7 +23,7 @@
 
 
 // Handler adhoc wifi station
-WiFiSelfEnroll MyWiFi;
+WiFiSelfEnroll * MyWiFi = new WiFiSelfEnroll();
 
 // SIoT Management Handler, send/receive data to/from SIOT API Center 
 SIOTClient siotclient;
@@ -32,7 +32,10 @@ void setup() {
   //just for debugging
   Serial.begin(115200);
   // Make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station with ssid = SOICT_CORE_BOARD and password =  12345678
-  MyWiFi.setup();
+  MyWiFi->setup();
+  // Release the memory allocated for WiFi Station Handler after finishing his work
+  delete  MyWiFi;
+  MyWiFi = _NULL;
   // Declare the virtual device information which you have register at http://siot.soict.ai (free)
   siotclient.Checkin("siot-demo","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiIwZDI1NWI5Ni05OWMyLTRmNTItOTg1NS0yZWRhNmI3MzYyMzAiLCJpYXQiOjE2ODcwNzQ4OTd9.SHRCTNASXYEPkYR-ZVadu1P19UPRTHQoHcZjzAoUaiM");
   // Send data to the attribute whose id is turnon-siot. Free to declare at siot.soict.ai as you need.
