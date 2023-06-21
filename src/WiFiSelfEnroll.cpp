@@ -238,7 +238,7 @@ void WiFiSelfEnroll::SetupStation(const char * adhoc_ssid, const char * adhoc_pa
         Serial.println("WiFi configuration is okay");
 #endif                
     }
-    if (WiFi.softAP(adhoc_ssid, adhoc_password,7,false)) {
+    if (WiFi.softAP(adhoc_ssid, adhoc_password,9,false)) {
 #ifdef _DEBUG_
         Serial.println("WiFi is ready!");
 #endif                 
