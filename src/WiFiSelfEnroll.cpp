@@ -205,8 +205,8 @@ void WiFiSelfEnroll::SetupStation(const char * adhoc_ssid, const char * adhoc_pa
     // Read the current wifi config
     ReadWiFiConfig();
 
-    IPAddress local_ip(192,168,9,1);
-    IPAddress gateway(192,168,9,1);
+    IPAddress local_ip(192,168,15,1);
+    IPAddress gateway(192,168,15,1);
     IPAddress subnet(255,255,255,0);
 
     //if (ssid == NULL) {
