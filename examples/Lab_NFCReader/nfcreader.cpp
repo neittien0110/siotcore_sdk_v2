@@ -35,13 +35,24 @@
   SIOTClient siotclient;  
 #endif
 
-//  Các tổ hợp vị tri SPI đã thử thành công
-#define SS_PIN   5  // 19 //  19 // 10     //SS/SDA
-#define SCLK_PIN 4  // 18 //  18 //  6   
-#define MOSI_PIN 18 // 5 //  5  //  7   
-#define MISO_PIN 19 // 4 //  4  //  2   
-#define RST_PIN   0 // 0 //  0  //  0         
- 
+#if defined(ARDUINO_ARCH_ESP32)  
+ #if defined(ARDUINO_ESP32_DEV)    // for board DOIT ESP32 DevKit as Readme.md
+  #define SS_PIN 21     //   SS/SDA
+  #define RST_PIN 0    //   Reset
+ #elif defined(ARDUINO_ESP32C3_DEV)    // for board ESP32-C3-DevKitM-1 dual USB as Readme.md
+  //  Các tổ hợp vị tri SPI đã thử thành công
+  #define SS_PIN   5  // 19 //  19 // 10     //SS/SDA
+  #define SCLK_PIN 4  // 18 //  18 //  6   
+  #define MOSI_PIN 18 // 5 //  5  //  7   
+  #define MISO_PIN 19 // 4 //  4  //  2   
+  #define RST_PIN   0 // 0 //  0  //  0
+  #endif
+#elif  defined(ARDUINO_ARCH_ESP8266)
+  // ESP8266 luôn cố định 2 cụm  SPI_PINS_HSPI với SCK=14,MISO=12,MOSI=13, CS=15  
+  #define SS_PIN   15 
+  #define RST_PIN  0
+#endif
+
 MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
 
 MFRC522::MIFARE_Key key; 
@@ -87,8 +98,14 @@ void setup() {
 #endif
   
   Serial.begin(115200);
-  //SPI.begin(); // Init SPI bus
+
+#if defined(ARDUINO_ARCH_ESP32) &&  defined(ARDUINO_ESP32C3_DEV) // for board ESP32-C3 DevKit as Readme.md
+  // ESP32 cho phép chọn chân pin bất kì làm SPI
   SPI.begin(SCLK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
+#else  // defined(ARDUINO_ARCH_ESP8266)
+  // ESP8266 luôn cố định 2 cụm  SPI_PINS_HSPI với SCK=14,MISO=12,MOSI=13, CS=15
+  SPI.begin(); // Init SPI bus
+#endif  
   rfid.PCD_Init(); // Init MFRC522 
 
   for (byte i = 0; i < 6; i++) {
