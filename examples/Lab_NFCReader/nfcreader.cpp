@@ -86,6 +86,10 @@ void printDec(byte *buffer, byte bufferSize) {
   }
 }
 void setup() { 
+  // Built-in led ready to bright, to be the lamp indicator
+  pinMode(LED_BUILTIN, OUTPUT);
+  // Turn of the lamp indicator
+  digitalWrite(LED_BUILTIN, LOW);
 
 #ifdef ENABLE_SIOT
   // Make sure WiFi ssid/password is correct. Otherwise, raise the Adhoc AP Station with ssid = SOICT_CORE_BOARD and password =  12345678
@@ -126,6 +130,10 @@ void loop() {
   // Verify if the NUID has been readed
   if ( ! rfid.PICC_ReadCardSerial())
     return;
+
+
+  // Turn on the lamp indicator whenever find something
+  digitalWrite(LED_BUILTIN, HIGH);
 
   Serial.print(F("PICC type: "));
   MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
@@ -170,6 +178,10 @@ void loop() {
     siotclient.Send("nfc-siot", json);
 #endif    
   }
+
+  delay(200);
+  // Turn off the lamp indicator whenever find something
+  digitalWrite(LED_BUILTIN, LOW);
 
   // Halt PICC
   rfid.PICC_HaltA();
