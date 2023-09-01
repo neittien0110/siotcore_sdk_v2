@@ -1,8 +1,13 @@
 #ifndef SIOTClient_h
 #define SIOTClient_h
 #include <WString.h>
-#include <WiFi.h>
-#include <HTTPClient.h>
+#if defined(ARDUINO_ARCH_ESP32)
+    #include <WiFi.h>
+    #include <HTTPClient.h>
+#elif  defined(ARDUINO_ARCH_ESP8266)
+    #include <ESP8266WiFi.h>
+    #include <ESP8266HTTPClient.h>
+#endif
 
 class SIOTClient{
     private:

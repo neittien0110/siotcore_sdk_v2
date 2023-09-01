@@ -23,8 +23,12 @@
 /// Such as in cases the AP restarts, or the electricty gone out.
  #define ADHOC_STATION_DURATION 5 * 60
 
-/// @brief Press BOOT Button whenever restart to force device into Adhoc Station mode
-#define BOOT_BUTTON GPIO_NUM_9
+#if defined(ARDUINO_ARCH_ESP32)
+    /// @brief Press BOOT Button whenever restart to force device into Adhoc Station mode
+    #define BOOT_BUTTON GPIO_NUM_9
+#elif defined(ARDUINO_ARCH_ESP8266)
+    #define BOOT_BUTTON 0   // GPIO 0  là nút bấm Flash với nội trở kéo lên
+#endif    
 
 /// @brief  the current ssid. A pointer to parambuf
 String WiFiSelfEnroll::ssid;
@@ -35,8 +39,13 @@ char WiFiSelfEnroll::mypassword[20];
 /// @brief  the current deviceid. A pointer to parambuf
 String WiFiSelfEnroll::deviceid;
 char WiFiSelfEnroll::mydeviceid[30];
-/// @brief  adhoc webserver to configure the new wifi network
-WebServer WiFiSelfEnroll::server(80);
+#if defined(ARDUINO_ARCH_ESP32)        
+    /// @brief  adhoc webserver to configure the new wifi network
+    WebServer WiFiSelfEnroll::server(80);
+#elif  defined(ARDUINO_ARCH_ESP8266)
+    /// @brief  adhoc webserver to configure the new wifi network
+    ESP8266WebServer WiFiSelfEnroll::server(80);        
+#endif    
 /// @brief flash mem handler 
 Preferences WiFiSelfEnroll::preferences;
 
@@ -370,13 +379,13 @@ void WiFiSelfEnroll::setup() {
 /// @note should let it at the first part of the global setup() function in Arduino Code.
 /// @example  WiFiSelfEnroll MyWiFi;  MyWiFi.setup("ABC","12345678");  
 void WiFiSelfEnroll::setup(const char * adhoc_ssid, const char * adhoc_password) {
-    APMode = false;
+    APMode = false;  
     /// Boot button connects GPIO9 to GND, so we must pullup it inside. 
     pinMode(BOOT_BUTTON, INPUT_PULLUP);
 #ifdef _DEBUG_    
     Serial.println("Check boot button..");
 #endif    
-    delay(1000);
+    delay(1000);    
     /// Turn to Adhoc station mode if the Boot button pressed or cannot connect to the AP
     if (digitalRead(BOOT_BUTTON) == LOW || !IsConfigOK()){
         APMode = true;

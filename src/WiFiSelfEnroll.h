@@ -1,8 +1,14 @@
 #ifndef WiFiSelfEnroll_h
 #define WiFiSelfEnroll_h
-#include <Preferences.h>            /// use permanent flash storage  https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
-#include <WiFi.h>
-#include <WebServer.h>              /// create webserver
+#if defined(ARDUINO_ARCH_ESP32)
+    #include <Preferences.h>            /// use permanent flash storage  https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
+    #include <WiFi.h>
+    #include <WebServer.h>              /// create webserver
+#elif  defined(ARDUINO_ARCH_ESP8266)
+    #include <Preferences.h>            /// use vshymanskyy/Preferences
+    #include <ESP8266WiFi.h>
+    #include <ESP8266WebServer.h>       /// create webserver
+#endif
 
 class WiFiSelfEnroll{
     private:
@@ -14,7 +20,11 @@ class WiFiSelfEnroll{
         static char mydeviceid[30];
         static Preferences preferences;
         static WiFiClient wificlient;
+#if defined(ARDUINO_ARCH_ESP32)        
         static WebServer server;
+#elif  defined(ARDUINO_ARCH_ESP8266)
+        static ESP8266WebServer server;
+#endif    
     private:
         /// @brief true if the Adhoc WiFi is active
         bool    APMode;

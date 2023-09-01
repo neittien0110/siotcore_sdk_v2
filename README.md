@@ -3,7 +3,9 @@
 ## Enviroment
 
 - IDE: Visual Studio Code + Platform IO
-- Device: ESP32, ESP32-C3
+- Architecture: esp32,esp8266
+  - Tested: [esp32doit-devkit-v1](https://docs.platformio.org/en/latest/boards/espressif32/esp32doit-devkit-v1.html), [esp32-c3-devkitm-1](https://docs.espressif.com/projects/esp-idf/en/v5.0/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html)
+  - Tested: [Wemos D1 Mini V3.0.0](https://grobotronics.com/wemos-d1-mini-esp8266-v2.0.html?sl=en)
 
 ---
 
