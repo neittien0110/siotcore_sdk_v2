@@ -13,7 +13,7 @@
 
 1. [Enroll WiFi by Adhoc WebServer](#enroll-wifi-by-adhoc-webserver)
 2. [Store data to SIoT center](#store-data-to-siot-center)
-
+3. [Connect nfc reader mfrc522 and store NFC card info to SIoT](https://github.com/neittien0110/siotcore_sdk_v2/tree/master/examples/Lab_NFCReader)
 ---
 
 ## Enroll WiFi by Adhoc WebServer
@@ -92,6 +92,7 @@ void loop(){
 
 }
 ```
+
 
 ![Visualize IoT device data ](images/b327a09e82488f609d63c8362a2d1813c67f6e02002bbde42fe7edfa7ac0ba11.png)  
 
