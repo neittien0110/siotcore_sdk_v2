@@ -1,5 +1,12 @@
 # NFC READER
 
+## Overview
+
+- Put your NFC Card (13.56HMz) over the NFC reader module
+- to view the NFC card:
+  - acccess the SIoT Data Hub website, or
+  - connect the device via rs232 cable with baud-rate 115200, or
+
 ![Data in SiOIT](../../images/4d4013f214a56aa918cd860acfef6b7b34d33b35cec0a1abf57ce543133b2d6c.png)  
 
 

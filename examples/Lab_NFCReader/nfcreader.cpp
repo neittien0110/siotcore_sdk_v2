@@ -25,7 +25,7 @@
 #include <SPI.h>
 #include <MFRC522.h>
 
-#define ENABLE_SIOT
+#define ENABLE_SIOT     // use it to send NFC card infor to SIOT Data Hub. comment it to ignore.
 #ifdef ENABLE_SIOT
   #include <siot_core_lib.h>    // SIOT Core Lib - all packages or you could select each package manually.
   // Handler adhoc wifi station
